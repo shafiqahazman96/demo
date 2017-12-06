@@ -1,0 +1,59 @@
+---
+title: "Lab6"
+author: "Shafiqah Azman"
+date: "August 8, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(foreign)
+student <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
+head(student$prog)
+```
+
+##1. prog is catogerical response variable. The model used to fit prog is nominal logistic regression. 
+
+##2.
+```{r}
+student$prog2 <- relevel(student$prog, ref = "academic")
+```
+
+```{r}
+contrasts(student$ses)=contr.treatment(levels(student$ses),base=1)
+contrasts(student$ses)
+```
+
+```{r}
+library(nnet)
+fit=multinom(student$prog2 ~ student$ses + student$write, data = student)
+summary(fit)
+```
+
+$$
+log(\frac {general}{academic})=1.689478general +1.1628411low+ 0.6295638 middle -0.05793086write \\
+log(\frac {vocation}{academic})= 4.235574vocation+0.9827182low+ 1.2740985 middle -0.11360389write \\
+$$
+
+##3. Wald statistics and p-value
+```{r}
+z=summary(fit)$coefficients/summary(fit)$standard.errors
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
+p
+```
+
+
+```{r}
+exp(confint(fit))
+```
+
+
+## For prog=general, the coefficients of ses=low and write are significant. For prog=vocation, the coefficients of intercept, ses=middle and write are significant. 
+
+##4.Interpretation of social economic status
+
+

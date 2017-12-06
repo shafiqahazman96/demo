@@ -1,0 +1,64 @@
+data1=read.table("Trees.txt",header=TRUE)
+attach(data1)
+#### Model Selection
+names(data1)
+
+y=Diameter
+x1=Height
+x2=Volume
+fit=lm(y~x1+x2)
+summary(fit)
+
+library(CARS) #load the package car
+vif(fit) #variance inflation factors
+avPlots(fit) #added variable plots
+
+library(MASS)
+stdres(fit) # provide the standardized residual
+studres(fit) #provide the deleted studentized residual
+rstudent(fit) #provide the studentized deleted residuals 
+
+lm.influence(fit)$hat # provide the diagonal element of hat matrix h_ii, which is also the leverage
+
+X=cbind(1,x1,x2) # design matrix
+H=X%*%solve(t(X)%*%X)%*%t(X) # calculate the hat matrix by definition
+
+# find the cut off point of leverage
+p=3
+n=length(y)
+2*p/n
+# find the cut off point of cook's distance
+qf(0.5,p,(n-p))
+4/n
+
+hatvalues(fit) #get the leverage values (hi)
+plot(hatvalues(fit)) # leverage plot
+
+cooks.distance(fit) #get Cook's distance
+
+plot(fit,which=4)# cook's distance plot
+plot(fit,which=6)# cook's distance plot
+
+plot(hatvalues(fit),cooks.distance(fit),xlab="leverage",ylab="cook's distance" )
+
+########## model selection
+
+fullmodel=lm(y~x1+x2+x3+x4+x5+x6, data=data1) # regress y on everything in mydata
+MSE=(summary(fullmodel)$sigma)^2 # store MSE for the full model
+
+step(fullmodel, scale=MSE, direction="backward") #backward elimination
+none=lm(y~1) #regress y on the constant only
+step(none, scope=list(upper=fullmodel), scale=MSE) #forward selection
+
+
+library(DAAG)
+press(fit)  # PRESS for model fit
+AIC(fit) #AIC for model fit
+BIC(fit) #BIC for model fit
+
+
+
+
+
+
+     

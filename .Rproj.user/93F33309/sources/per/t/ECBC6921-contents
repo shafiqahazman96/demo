@@ -1,0 +1,50 @@
+diamonds=read.csv("DiamondRings.csv") ## read in data
+head(diamonds)  ## check the head of the dataset
+attach(diamonds)
+
+### Fit SLR in r
+lm_fit=lm(Price~Carats)
+
+fit=aov(Price~Carats)  ### anova table: decomposition part
+plot(lm_fit)  #### diagnostic plot
+plot(fit)  #### give you the same diagnostic plot as plot(lm_fit)
+
+summary(fit)  ### anova table: hypothesis testing 
+
+### use predict() to compute predict interval and confidence interval
+sequ=seq(min(Carats),max(Carats),0.001)
+newdat=data.frame(Carats=sequ)
+pred.lwr=predict(lm_fit,newdata=data.frame(newdat),interval = "predict",level = 0.95)[,2]
+pred.upr=predict(lm_fit,newdata=data.frame(newdat),interval = "predict",level = 0.95)[,3]
+conf.lwr=predict(lm_fit,newdata=data.frame(newdat),interval = "confidence",level = 0.95)[,2]
+conf.upr=predict(lm_fit,newdata=data.frame(newdat),interval = "confidence",level = 0.95)[,3]
+
+### scatter plot with CI and PI 
+plot(Carats, Price,xlim = c(min(Carats),max(Carats)),ylim = c(min(Price),max(Price)),main="scatter plot with CI and PI")
+lines(sequ,conf.lwr,col="blue")
+lines(sequ,conf.upr,col="blue")
+lines(sequ,pred.lwr,col="red")
+lines(sequ,pred.upr,col="red")
+
+
+### residual plot
+lmresid=lm_fit$residuals
+lmfit=lm_fit$fitted.values
+plot(lmfit,lmresid,main="residual plot: residual vs fit")
+abline(0,0,col="red") ## add the horizontal line to plot
+
+plot(lmresid,main="residual vs index")
+
+### qq plot
+qqnorm(lmresid)
+qqline(lmresid,col="red")
+
+
+### histogram
+hist(lmresid)
+
+
+
+
+
+

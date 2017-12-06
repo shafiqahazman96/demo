@@ -1,0 +1,62 @@
+---
+title: "Lab4"
+author: "Shafiqah Azman"
+date: "July 27, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Question 1.
+
+$$
+logit(\pi_i)=log(\frac{\pi_i}{1-\pi_i}) = \beta_0+\beta_1x_i 
+$$
+
+##2Question 2.
+
+```{r}
+MA<-read.table("F:/[Stat462]/Data/Challenger.txt", header=T)
+```
+
+
+```{r}
+glmfit2<-glm(MA$Damage~MA$Temp,family=binomial(link="logit"))
+summary(glmfit2)
+```
+
+$$
+logit(\pi_i)=log(\frac{\pi_i}{1-\pi_i}) = \beta_0+\beta_1x_i = 15.0429  -0.2322Temp
+$$
+```{r}
+15.0429  -0.2322*57
+```
+
+##Question 3. Probability of damage at a temperature of 57 degrees:
+
+$$
+p(Temp=57) = (exp(0.417605))/(1+exp(0.417605)) = 0.60291
+$$
+
+##Question 4.
+
+```{r}
+(exp(0.417605))/(1+exp(0.417605))
+```
+
+##5.
+
+```{r}
+(exp(-3.191464 + (0.063317*58)))/(1+exp(-3.191464 + (0.063317*58)))
+
+```
+
+##6. As the temperature increases, the probability of damage increases. Hence it is safer to launch in cooler temperature.
+
+##7.
+```{r}
+(exp(-3.191464 + (0.063317*31)))/(1+exp(-3.191464 + (0.063317*31)))
+```
+
